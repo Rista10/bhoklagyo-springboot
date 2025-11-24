@@ -1,14 +1,16 @@
 package com.backend.bhoklagyo.mapper;
 
+import com.backend.bhoklagyo.dto.restaurant.RestaurantRequestDTO;
+import com.backend.bhoklagyo.dto.restaurant.RestaurantResponseDTO;
 import com.backend.bhoklagyo.model.Restaurant;
-import com.backend.bhoklagyo.dto.RestaurantResponseDTO;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class RestaurantMapper {
 
-    // Single entity → DTO
+    private RestaurantMapper() {}
+
     public static RestaurantResponseDTO toDTO(Restaurant restaurant) {
         if (restaurant == null) return null;
 
@@ -27,7 +29,23 @@ public class RestaurantMapper {
         return dto;
     }
 
-    // List of entities → List of DTOs
+    public static Restaurant toEntity(RestaurantRequestDTO dto) {
+        if (dto == null) return null;
+
+        Restaurant restaurant = new Restaurant();
+        restaurant.setRestaurantName(dto.getRestaurantName());
+        restaurant.setDescription(dto.getDescription());
+        restaurant.setCuisineType(dto.getCuisineType());
+        restaurant.setRating(dto.getRating());
+        restaurant.setAddress(dto.getAddress());
+        restaurant.setPhoneNumber(dto.getPhoneNumber());
+        restaurant.setOpeningTime(dto.getOpeningTime());
+        restaurant.setClosingTime(dto.getClosingTime());
+
+        return restaurant;
+    }
+
+
     public static List<RestaurantResponseDTO> toDTOs(List<Restaurant> restaurants) {
         if (restaurants == null) return List.of();
         return restaurants.stream()

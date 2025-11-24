@@ -1,7 +1,7 @@
 package com.backend.bhoklagyo.controller;
 
-import com.backend.bhoklagyo.dto.RestaurantRequestDTO;
-import com.backend.bhoklagyo.dto.RestaurantResponseDTO;
+import com.backend.bhoklagyo.dto.restaurant.RestaurantRequestDTO;
+import com.backend.bhoklagyo.dto.restaurant.RestaurantResponseDTO;
 import com.backend.bhoklagyo.service.RestaurantService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

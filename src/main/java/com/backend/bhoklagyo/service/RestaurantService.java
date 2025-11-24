@@ -1,7 +1,7 @@
 package com.backend.bhoklagyo.service;
 
-import com.backend.bhoklagyo.dto.RestaurantRequestDTO;
-import com.backend.bhoklagyo.dto.RestaurantResponseDTO;
+import com.backend.bhoklagyo.dto.restaurant.RestaurantRequestDTO;
+import com.backend.bhoklagyo.dto.restaurant.RestaurantResponseDTO;
 import com.backend.bhoklagyo.mapper.RestaurantMapper;
 import com.backend.bhoklagyo.model.Owner;
 import com.backend.bhoklagyo.model.Restaurant;
@@ -36,20 +36,15 @@ public class RestaurantService {
     }
 
     // Create new restaurant
-    public RestaurantResponseDTO createRestaurant(RestaurantRequestDTO request) {
-        Owner owner = ownerRepository.findById(request.getOwnerId())
-                .orElseThrow(() -> new RuntimeException("Owner not found with id " + request.getOwnerId()));
+   public RestaurantResponseDTO createRestaurant(RestaurantRequestDTO request) {
 
-        Restaurant restaurant = new Restaurant();
-        restaurant.setRestaurantName(request.getRestaurantName());
-        restaurant.setDescription(request.getDescription());
-        restaurant.setCuisineType(request.getCuisineType());
-        restaurant.setRating(request.getRating());
+        Owner owner = ownerRepository.findById(request.getOwnerId())
+                .orElseThrow(() ->
+                        new RuntimeException("Owner not found with id " + request.getOwnerId()));
+
+        // Use mapper
+        Restaurant restaurant = RestaurantMapper.toEntity(request);
         restaurant.setOwner(owner);
-        restaurant.setAddress(request.getAddress());
-        restaurant.setPhoneNumber(request.getPhoneNumber());
-        restaurant.setOpeningTime(request.getOpeningTime());
-        restaurant.setClosingTime(request.getClosingTime());
 
         Restaurant saved = restaurantRepository.save(restaurant);
         return RestaurantMapper.toDTO(saved);

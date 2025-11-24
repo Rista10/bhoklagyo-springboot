@@ -1,4 +1,4 @@
-package com.backend.bhoklagyo.dto;
+package com.backend.bhoklagyo.dto.restaurant;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,8 +9,8 @@ import java.time.LocalTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RestaurantResponseDTO {
-    private Long id;
+public class RestaurantRequestDTO {
+
     private String restaurantName;
     private String description;
     private String cuisineType;
