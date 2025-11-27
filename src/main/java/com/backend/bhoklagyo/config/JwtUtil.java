@@ -4,11 +4,13 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Value;
 
 @Component
 public class JwtUtil {
 
-    private final String SECRET = "L//XBdzGrcu3SREJWTNCYS4tpaOka8eZgGtOkwmMqBA=";
+    @Value("${jwt.secret}")
+    private String SECRET;
 
     public String generateToken(String email) {
         return Jwts.builder()
