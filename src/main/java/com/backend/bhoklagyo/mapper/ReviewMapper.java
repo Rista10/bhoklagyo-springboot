@@ -12,7 +12,6 @@ public class ReviewMapper {
         ReviewDTO dto = new ReviewDTO();
         dto.setId(review.getId());
         dto.setCustomerId(review.getCustomer().getId());
-        dto.setCustomerName(review.getCustomer().getName());
         dto.setRestaurantId(review.getRestaurant().getId());
         dto.setRating(review.getRating());
         dto.setComment(review.getComment());

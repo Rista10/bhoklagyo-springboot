@@ -28,6 +28,12 @@ public class MenuItem {
     @Column(name = "is_available")
     private boolean isAvailable;
 
+    @Column(name = "is_veg")
+    private boolean isVeg;
+
+    @Column(name = "preparation_time")
+    private Integer preparationTime; // in minutes
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;

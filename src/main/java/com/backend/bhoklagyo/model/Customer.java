@@ -16,18 +16,10 @@ import java.util.List;
 public class Customer extends User {
 
     @ElementCollection
-    @CollectionTable(name = "customer_delivery_addresses", joinColumns = @JoinColumn(name = "customer_id"))
+    @CollectionTable(name = "customer_delivery_addresses", 
+        joinColumns = @JoinColumn(name = "customer_id"))
     @Column(name = "address")
     private List<String> deliveryAddresses;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Order> orderHistory;
-
-    // @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    // private Cart cart;
-
-    public Customer(String name, String email, Long phoneNumber, List<String> deliveryAddresses) {
-        super(name, email, phoneNumber);
-        this.deliveryAddresses = deliveryAddresses;
-    }
 }
+

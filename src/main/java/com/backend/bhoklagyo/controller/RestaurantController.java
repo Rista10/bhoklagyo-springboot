@@ -56,9 +56,9 @@ public class RestaurantController {
     @GetMapping("/search")
     public ResponseEntity<List<RestaurantResponseDTO>> searchRestaurants(
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) String category
+            @RequestParam(required = false) String cuisine
     ) {
-        List<RestaurantResponseDTO> results = restaurantService.searchRestaurants(name, category);
+        List<RestaurantResponseDTO> results = restaurantService.searchRestaurants(name, cuisine);
         return ResponseEntity.ok(results);
     }
 

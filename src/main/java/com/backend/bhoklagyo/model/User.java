@@ -1,14 +1,23 @@
 package com.backend.bhoklagyo.model;
+
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Entity
-@Table(name = "\"user\"")
+@Table(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
+
+    public enum Role {
+        CUSTOMER,
+        RESTAURANT_OWNER,
+        DELIVERY_PERSON
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,11 +26,11 @@ public class User {
     private String name;
 
     private String email;
-    private Long phoneNumber;
 
-    public User(String name, String email, Long phoneNumber) {
-        this.name = name;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-    }
+    @Column(nullable = true)
+    private String phone_number;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
 }

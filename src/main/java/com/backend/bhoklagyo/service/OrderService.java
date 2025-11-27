@@ -23,7 +23,6 @@ public class OrderService {
     private final RestaurantRepository restaurantRepo;
     private final OrderRepository orderRepo;
     private final OrderItemRepository orderItemRepo;
-    private final CartRepository cartRepo;
     private final MenuItemRepository menuItemRepo;
 
     public OrderDTO createOrder(CreateOrderDTO dto) {
@@ -33,10 +32,8 @@ public class OrderService {
 
         List<OrderItem> orderItems = new ArrayList<>();
         double totalAmount = 0.0;
-        boolean usedCart = false;
 
-        if (dto.getItems() != null && !dto.getItems().isEmpty()) {
-
+        
             for (var itemDTO : dto.getItems()) {
                 MenuItem menuItem = menuItemRepo.findById(itemDTO.getMenuItemId())
                         .orElseThrow(() -> new RuntimeException("Menu item not found"));
@@ -50,24 +47,6 @@ public class OrderService {
                 orderItems.add(orderItem);
             }
 
-        } else {
-            Cart cart = cartRepo.findByCustomerId(dto.getCustomerId());
-            if (cart == null || cart.getCartItems().isEmpty()) {
-                throw new RuntimeException("Cart is empty");
-            }
-
-            for (CartItem cartItem : cart.getCartItems()) {
-                OrderItem orderItem = new OrderItem();
-                orderItem.setMenuItem(cartItem.getMenuItem());
-                orderItem.setQuantity(cartItem.getQuantity());
-                orderItem.setUnitPrice(cartItem.getUnitPrice());
-
-                totalAmount += cartItem.getUnitPrice() * cartItem.getQuantity();
-                orderItems.add(orderItem);
-            }
-
-            usedCart = true;
-        }
 
         Order order = new Order();
         order.setCustomer(customer);
@@ -83,12 +62,6 @@ public class OrderService {
             item.setOrder(order);
             orderItemRepo.save(item);
         }
-        if (usedCart) {
-            Cart cart = cartRepo.findByCustomerId(dto.getCustomerId());
-            cart.getCartItems().clear();
-            cartRepo.save(cart);
-        }
-
         return OrderMapper.toDTO(order);
     }
 
@@ -109,10 +82,6 @@ public class OrderService {
         return OrderMapper.toDTO(order);
     }
 
-
-    public void deleteOrder(Long orderId) {
-        orderRepo.deleteById(orderId);
-    }
 
     public List<OrderDTO> getOrdersByCustomer(Long customerId) {
         List<Order> orders = orderRepo.findByCustomerId(customerId);

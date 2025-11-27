@@ -31,4 +31,7 @@ public class OrderItem {
     @Column(name = "unit_price")
     private Double unitPrice;
 
+    @Column(name = "restaurant_total")
+    private Double restaurantTotal;
+
 }

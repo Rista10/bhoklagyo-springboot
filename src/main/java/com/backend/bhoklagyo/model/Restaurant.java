@@ -3,7 +3,6 @@ package com.backend.bhoklagyo.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.time.LocalTime;
 import jakarta.persistence.*;
 import java.util.List;
@@ -39,7 +38,6 @@ public class Restaurant {
     private List<MenuItem> menu;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference
     @JoinColumn(name = "owner_id")
     private Owner owner;
 }

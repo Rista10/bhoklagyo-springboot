@@ -13,15 +13,9 @@ import java.util.List;
 @PrimaryKeyJoinColumn(name = "user_id")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Owner extends User {
 
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
-    private List<Restaurant> restaurants;
-
-    public Owner(String name, String email, Long phoneNumber, List<Restaurant> restaurants) {
-        super(name, email, phoneNumber);
-        this.restaurants = restaurants;
-    }
+    // @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // @JsonManagedReference
+    // private List<Restaurant> restaurants;
 }

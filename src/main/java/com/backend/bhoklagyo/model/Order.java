@@ -24,14 +24,24 @@ public class Order {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "restaurant_id")
+    private Restaurant restaurant;
+
     @Column(name = "order_status")
     private String orderStatus;
 
     @Column(name = "payment_status")
     private String paymentStatus;
 
+    @Column(name = "delivery_charge")
+    private Double deliveryCharge;
+
     @Column(name = "total_amount")
     private Double totalAmount;
+
+    @Column(name = "special_instructions")
+    private String specialInstructions;
 
     @Column(name = "delivery_address")
     private String deliveryAddress;

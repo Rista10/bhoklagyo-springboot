@@ -34,10 +34,6 @@ public class OrderController {
         return orderService.updateOrderStatus(orderId, status);
     }
 
-    @DeleteMapping("/{orderId}")
-    public void delete(@PathVariable Long orderId) {
-        orderService.deleteOrder(orderId);
-    }
 
     @GetMapping("/customers/{customerId}/orders")
     public ResponseEntity<List<OrderDTO>> getOrdersByCustomer(
