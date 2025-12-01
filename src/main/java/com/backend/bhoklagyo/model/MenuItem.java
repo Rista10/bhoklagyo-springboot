@@ -16,25 +16,25 @@ public class MenuItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; 
 
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(length = 500)
+    @Column(name = "description", length = 500)
     private String description;
 
+    @Column(name = "price", nullable = false)
     private Double price;
 
+    @Column(name = "category", nullable = false)
     private String category;
 
-    @Column(name = "is_available")
-    private boolean isAvailable;
+    @Column(name = "is_veg", nullable = false)
+    private Boolean isVeg = false;
 
-    @Column(name = "is_veg")
-    private boolean isVeg;
-
-    @Column(name = "preparation_time")
-    private Integer preparationTime; // in minutes
+    @Column(name = "preparation_time_mins")
+    private Integer preparationTimeMins;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "restaurant_id")
+    @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
 }

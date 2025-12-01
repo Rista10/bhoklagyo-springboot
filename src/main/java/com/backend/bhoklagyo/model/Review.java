@@ -26,11 +26,15 @@ public class Review {
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
+
     private int rating;
 
     @Column(length = 1000)
     private String comment;
 
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

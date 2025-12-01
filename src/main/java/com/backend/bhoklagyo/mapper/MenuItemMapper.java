@@ -16,7 +16,6 @@ public class MenuItemMapper {
         dto.setDescription(entity.getDescription());
         dto.setPrice(entity.getPrice());
         dto.setCategory(entity.getCategory());
-        dto.setAvailable(entity.isAvailable());
         return dto;
     }
 
@@ -26,7 +25,6 @@ public class MenuItemMapper {
         item.setDescription(dto.getDescription());
         item.setPrice(dto.getPrice());
         item.setCategory(dto.getCategory());
-        item.setAvailable(dto.isAvailable());
         item.setRestaurant(restaurant);
         return item;
     }

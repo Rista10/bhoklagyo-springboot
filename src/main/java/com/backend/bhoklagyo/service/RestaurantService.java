@@ -8,6 +8,10 @@ import com.backend.bhoklagyo.model.Restaurant;
 import com.backend.bhoklagyo.repository.OwnerRepository;
 import com.backend.bhoklagyo.repository.RestaurantRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
+import com.backend.bhoklagyo.model.User;
+import com.backend.bhoklagyo.repository.UserRepository;
 
 import java.util.List;
 
@@ -16,11 +20,18 @@ public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
     private final OwnerRepository ownerRepository;
+    private final UserRepository userRepository;
 
-    public RestaurantService(RestaurantRepository restaurantRepository, OwnerRepository ownerRepository) {
+    public RestaurantService(
+        RestaurantRepository restaurantRepository,
+        OwnerRepository ownerRepository,
+        UserRepository userRepository
+    ) {
         this.restaurantRepository = restaurantRepository;
         this.ownerRepository = ownerRepository;
+        this.userRepository = userRepository;
     }
+
 
     // Get all restaurants
     public List<RestaurantResponseDTO> getAllRestaurants() {
@@ -36,13 +47,22 @@ public class RestaurantService {
     }
 
     // Create new restaurant
-   public RestaurantResponseDTO createRestaurant(RestaurantRequestDTO request) {
+    public RestaurantResponseDTO createRestaurant(
+            RestaurantRequestDTO request,
+            Authentication authentication
+    ) {
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        String auth0Id = jwt.getSubject();
 
-        Owner owner = ownerRepository.findById(request.getOwnerId())
-                .orElseThrow(() ->
-                        new RuntimeException("Owner not found with id " + request.getOwnerId()));
+        // 1. Get User from auth0Id
+        User user = userRepository.findByAuth0Id(auth0Id)
+                .orElseThrow(() -> new RuntimeException("User not found for auth0Id: " + auth0Id));
 
-        // Use mapper
+        // 2. Get Owner from User
+        Owner owner = ownerRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("User is not a restaurant owner"));
+
+        // 3. Create restaurant
         Restaurant restaurant = RestaurantMapper.toEntity(request);
         restaurant.setOwner(owner);
 
@@ -50,10 +70,13 @@ public class RestaurantService {
         return RestaurantMapper.toDTO(saved);
     }
 
+
     // Update existing restaurant
     public RestaurantResponseDTO updateRestaurant(Long restaurantId, RestaurantRequestDTO request) {
+
         Restaurant updated = restaurantRepository.findById(restaurantId)
                 .map(restaurant -> {
+
                     restaurant.setRestaurantName(request.getRestaurantName());
                     restaurant.setDescription(request.getDescription());
                     restaurant.setCuisineType(request.getCuisineType());
@@ -63,18 +86,13 @@ public class RestaurantService {
                     restaurant.setOpeningTime(request.getOpeningTime());
                     restaurant.setClosingTime(request.getClosingTime());
 
-                    if (request.getOwnerId() != null) {
-                        Owner owner = ownerRepository.findById(request.getOwnerId())
-                                .orElseThrow(() -> new RuntimeException("Owner not found with id " + request.getOwnerId()));
-                        restaurant.setOwner(owner);
-                    }
-
                     return restaurantRepository.save(restaurant);
                 })
                 .orElseThrow(() -> new RuntimeException("Restaurant not found with id " + restaurantId));
 
         return RestaurantMapper.toDTO(updated);
     }
+
 
     // Delete restaurant
     public void deleteRestaurant(Long restaurantId) {

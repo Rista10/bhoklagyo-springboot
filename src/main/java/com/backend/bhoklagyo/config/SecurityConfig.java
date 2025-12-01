@@ -1,51 +1,69 @@
 package com.backend.bhoklagyo.config;
 
-import com.backend.bhoklagyo.service.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import java.util.stream.Collectors;
+import java.util.List;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
-
-    private final JwtAuthFilter jwtAuthFilter;
-    private final CustomOAuth2UserService customOAuth2UserService;
-    private final OAuthSuccessHandler oAuthSuccessHandler;
-
-    public SecurityConfig(
-            JwtAuthFilter jwtAuthFilter,
-            CustomOAuth2UserService customOAuth2UserService,
-            OAuthSuccessHandler oAuthSuccessHandler) {
-        this.jwtAuthFilter = jwtAuthFilter;
-        this.customOAuth2UserService = customOAuth2UserService;
-        this.oAuthSuccessHandler = oAuthSuccessHandler;
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                
+                // Public endpoints (restaurant browsing)
+                .requestMatchers(
+                        "/restaurants/**",
+                        "/menu-items/**",
+                        "/reviews/**"
+                ).permitAll()
+
+                // CUSTOMER
+                .requestMatchers(
+                        "/orders/**",
+                        "/users/me/**",
+                        "/role-requests/**"
+                ).authenticated()
+
+                // // RESTAURANT OWNER
+                .requestMatchers(
+                    "/restaurants",
+                    "/restaurants/*/menu-items",
+                    "/restaurants/*/menu-items/**",
+                    "/menu-items/**"
+                ).hasAuthority("RESTAURANT_OWNER")
 
 
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/oauth2/**").permitAll()
-                        .anyRequest().authenticated()
-                )
+                // // DELIVERY PERSON
+                // .requestMatchers(
+                //         "/deliveries/**",
+                //         "/my/deliveries"
+                // ).hasRole("DELIVERY PERSON")
 
-                .oauth2Login(oauth -> oauth
-                        // .authorizationEndpoint(a -> a.baseUri("/oauth2/authorize"))
-                        // .redirectionEndpoint(r -> r.baseUri("/oauth2/callback/*"))
-                        .userInfoEndpoint(user -> user.userService(customOAuth2UserService))
-                        .successHandler(oAuthSuccessHandler)
-                );
-
-        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                // .anyRequest().authenticated()
+            )
+            .oauth2ResourceServer(oauth2 ->
+                oauth2.jwt()
+        );
 
         return http.build();
     }
+
 }

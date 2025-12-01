@@ -9,17 +9,19 @@ import java.util.List;
 
 @Entity
 @Table(name = "customers")
-@PrimaryKeyJoinColumn(name = "user_id")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Customer extends User {
 
-    @ElementCollection
-    @CollectionTable(name = "customer_delivery_addresses", 
-        joinColumns = @JoinColumn(name = "customer_id"))
-    @Column(name = "address")
-    private List<String> deliveryAddresses;
+    @Column(name = "default_lat",nullable = true)
+    private Double defaultLat;
+
+    @Column(name = "default_long",nullable = true)
+    private Double defaultLong;
+
+    @Column(name = "default_address",nullable = true)
+    private String defaultAddress;
 
 }
 

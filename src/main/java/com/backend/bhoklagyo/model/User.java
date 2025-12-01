@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import com.backend.bhoklagyo.enums.Role;
 
 @Entity
 @Table(name = "users")
@@ -13,22 +14,19 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class User {
 
-    public enum Role {
-        CUSTOMER,
-        RESTAURANT_OWNER,
-        DELIVERY_PERSON
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String auth0Id;
+
+    @Column(name = "full_name")
     private String name;
 
     private String email;
 
     @Column(nullable = true)
-    private String phone_number;
+    private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
     private Role role;

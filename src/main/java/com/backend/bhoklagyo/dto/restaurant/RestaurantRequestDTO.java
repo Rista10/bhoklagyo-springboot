@@ -15,7 +15,6 @@ public class RestaurantRequestDTO {
     private String description;
     private String cuisineType;
     private Double rating;
-    private Long ownerId;
     private String address;
     private String phoneNumber;
     private LocalTime openingTime;

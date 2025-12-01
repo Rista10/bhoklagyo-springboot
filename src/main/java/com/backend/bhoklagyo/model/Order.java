@@ -28,11 +28,16 @@ public class Order {
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
-    @Column(name = "order_status")
-    private String orderStatus;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "delivery_person_id")
+    private DeliveryPerson deliveryPerson;
 
-    @Column(name = "payment_status")
-    private String paymentStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private OrderStatus status = OrderStatus.PENDING;
+
+    @Column(name = "item_total")
+    private Double itemTotal;
 
     @Column(name = "delivery_charge")
     private Double deliveryCharge;
@@ -40,14 +45,14 @@ public class Order {
     @Column(name = "total_amount")
     private Double totalAmount;
 
-    @Column(name = "special_instructions")
+    @Column(name = "special_instructions",columnDefinition = "TEXT")
     private String specialInstructions;
 
-    @Column(name = "delivery_address")
-    private String deliveryAddress;
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private DeliveryAddress deliveryAddress;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();

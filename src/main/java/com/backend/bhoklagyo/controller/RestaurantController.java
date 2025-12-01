@@ -5,6 +5,8 @@ import com.backend.bhoklagyo.dto.restaurant.RestaurantResponseDTO;
 import com.backend.bhoklagyo.service.RestaurantService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -19,10 +21,15 @@ public class RestaurantController {
     }
 
     @PostMapping
-    public ResponseEntity<RestaurantResponseDTO> createRestaurant(@RequestBody RestaurantRequestDTO request) {
-        RestaurantResponseDTO created = restaurantService.createRestaurant(request);
-        return ResponseEntity.ok(created);
+    public ResponseEntity<RestaurantResponseDTO> createRestaurant(
+            @RequestBody RestaurantRequestDTO request,
+            Authentication authentication
+    ) {
+        return ResponseEntity.ok(
+            restaurantService.createRestaurant(request, authentication)
+        );
     }
+
 
     @PutMapping("/{restaurantId}")
     public ResponseEntity<RestaurantResponseDTO> updateRestaurant(

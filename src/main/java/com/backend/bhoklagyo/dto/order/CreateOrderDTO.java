@@ -1,11 +1,14 @@
 package com.backend.bhoklagyo.dto.order;
-import java.util.List;
+
+import com.backend.bhoklagyo.dto.address.DeliveryAddressCreateDTO;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class CreateOrderDTO {
     private Long customerId;
-    private String deliveryAddress;
-    private String paymentMethod; 
     private List<CreateOrderItemDTO> items;
+    private String paymentStatus;
+    private DeliveryAddressCreateDTO deliveryAddress;  
 }

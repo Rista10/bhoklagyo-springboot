@@ -16,10 +16,11 @@ public class OrderMapper {
 
         dto.setId(order.getId());
         dto.setCustomerId(order.getCustomer().getId());
-        dto.setOrderStatus(order.getOrderStatus());
-        dto.setPaymentStatus(order.getPaymentStatus());
         dto.setTotalAmount(order.getTotalAmount());
-        dto.setDeliveryAddress(order.getDeliveryAddress());
+        dto.setDeliveryAddress(
+    DeliveryAddressMapper.toResponseDTO(order.getDeliveryAddress())
+);
+
         dto.setCreatedAt(order.getCreatedAt());
 
         dto.setItems(

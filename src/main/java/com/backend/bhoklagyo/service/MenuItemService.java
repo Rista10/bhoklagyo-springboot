@@ -48,7 +48,6 @@ public class MenuItemService {
         item.setDescription(dto.getDescription());
         item.setPrice(dto.getPrice());
         item.setCategory(dto.getCategory());
-        item.setAvailable(dto.isAvailable());
 
         return MenuItemMapper.toDTO(menuItemRepo.save(item));
     }
