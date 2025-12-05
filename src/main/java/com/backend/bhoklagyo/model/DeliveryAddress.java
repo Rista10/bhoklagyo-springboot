@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+
 
 @Entity
 @Table(name = "delivery_addresses")
@@ -13,8 +17,8 @@ import lombok.AllArgsConstructor;
 public class DeliveryAddress {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;  
 
     @OneToOne
     @JoinColumn(name = "order_id", nullable = false, unique = true)

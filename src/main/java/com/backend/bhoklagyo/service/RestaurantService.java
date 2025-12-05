@@ -9,38 +9,43 @@ import com.backend.bhoklagyo.repository.OwnerRepository;
 import com.backend.bhoklagyo.repository.RestaurantRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.Authentication;
+import com.backend.bhoklagyo.mapper.MenuItemMapper;
+import com.backend.bhoklagyo.model.MenuItem;
+import com.backend.bhoklagyo.repository.MenuItemRepository;
 import org.springframework.security.oauth2.jwt.Jwt;
 import com.backend.bhoklagyo.model.User;
 import com.backend.bhoklagyo.repository.UserRepository;
+import com.backend.bhoklagyo.exception.NoSuchRestaurantExistsException;
+import com.backend.bhoklagyo.dto.menu.MenuItemDTO;
+import com.backend.bhoklagyo.service.AuthService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import lombok.RequiredArgsConstructor;
+import java.util.UUID;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
     private final OwnerRepository ownerRepository;
     private final UserRepository userRepository;
-
-    public RestaurantService(
-        RestaurantRepository restaurantRepository,
-        OwnerRepository ownerRepository,
-        UserRepository userRepository
-    ) {
-        this.restaurantRepository = restaurantRepository;
-        this.ownerRepository = ownerRepository;
-        this.userRepository = userRepository;
-    }
+    private final MenuItemRepository menuItemRepository;
+    private final AuthService authService;
 
 
     // Get all restaurants
-    public List<RestaurantResponseDTO> getAllRestaurants() {
-        List<Restaurant> restaurants = restaurantRepository.findAll();
+    public List<RestaurantResponseDTO> getAllRestaurants(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<Restaurant> restaurants = restaurantRepository.findAll(pageable).getContent();
         return RestaurantMapper.toDTOs(restaurants);
     }
 
     // Get restaurant by ID
-    public RestaurantResponseDTO getRestaurantById(Long id) {
+    public RestaurantResponseDTO getRestaurantById(UUID id) {
         Restaurant restaurant = restaurantRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Restaurant not found with id " + id));
         return RestaurantMapper.toDTO(restaurant);
@@ -51,18 +56,10 @@ public class RestaurantService {
             RestaurantRequestDTO request,
             Authentication authentication
     ) {
-        Jwt jwt = (Jwt) authentication.getPrincipal();
-        String auth0Id = jwt.getSubject();
-
-        // 1. Get User from auth0Id
-        User user = userRepository.findByAuth0Id(auth0Id)
-                .orElseThrow(() -> new RuntimeException("User not found for auth0Id: " + auth0Id));
-
-        // 2. Get Owner from User
+        User user = authService.getCurrentUser(authentication);
         Owner owner = ownerRepository.findByUser(user)
                 .orElseThrow(() -> new RuntimeException("User is not a restaurant owner"));
 
-        // 3. Create restaurant
         Restaurant restaurant = RestaurantMapper.toEntity(request);
         restaurant.setOwner(owner);
 
@@ -71,8 +68,7 @@ public class RestaurantService {
     }
 
 
-    // Update existing restaurant
-    public RestaurantResponseDTO updateRestaurant(Long restaurantId, RestaurantRequestDTO request) {
+    public RestaurantResponseDTO updateRestaurant(UUID restaurantId, RestaurantRequestDTO request) {
 
         Restaurant updated = restaurantRepository.findById(restaurantId)
                 .map(restaurant -> {
@@ -95,25 +91,52 @@ public class RestaurantService {
 
 
     // Delete restaurant
-    public void deleteRestaurant(Long restaurantId) {
+    public void deleteRestaurant(UUID restaurantId) {
         restaurantRepository.deleteById(restaurantId);
     }
 
-    // Search & filter restaurants
-    public List<RestaurantResponseDTO> searchRestaurants(String name, String category) {
-        List<Restaurant> restaurants;
 
-        if (name != null && category != null) {
-            restaurants = restaurantRepository
-                    .findByRestaurantNameContainingIgnoreCaseAndCuisineTypeIgnoreCase(name, category);
-        } else if (name != null) {
-            restaurants = restaurantRepository.findByRestaurantNameContainingIgnoreCase(name);
-        } else if (category != null) {
-            restaurants = restaurantRepository.findByCuisineTypeIgnoreCase(category);
-        } else {
-            restaurants = restaurantRepository.findAll();
-        }
-
+    public List<RestaurantResponseDTO> getNearbyRestaurants(Double lat, Double lng, Double radius) {
+        List<Restaurant> restaurants = restaurantRepository.findNearby(lat, lng, radius);
         return RestaurantMapper.toDTOs(restaurants);
     }
+
+    public Page<MenuItemDTO> getFilteredMenu(
+            UUID restaurantId,
+            String category,
+            Double price,
+            Integer preparationTime,
+            int page,
+            int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<MenuItem> menuPage = menuItemRepository.findFiltered(
+                restaurantId,
+                category,
+                price,
+                preparationTime,
+                pageable
+        );
+
+        return menuPage.map(MenuItemMapper::toDTO);
+    }
+
+        public Restaurant getRestaurant(UUID id) {
+                return restaurantRepository.findById(id)
+                    .orElseThrow(() -> new NoSuchRestaurantExistsException("Restaurant not found with id " + id));
+            }
+   
+   public List<RestaurantResponseDTO> getRestaurantsByOwner(UUID userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
+                
+        Owner owner = ownerRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Owner not found for user with id " + userId));
+
+        List<Restaurant> restaurants = restaurantRepository.findByOwner(owner);
+        return RestaurantMapper.toDTOs(restaurants);
+    }
+
 }

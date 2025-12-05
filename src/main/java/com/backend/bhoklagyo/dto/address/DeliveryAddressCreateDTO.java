@@ -1,11 +1,12 @@
 package com.backend.bhoklagyo.dto.address;
 
 import lombok.Data;
+import java.util.UUID;
 
 @Data
 public class DeliveryAddressCreateDTO {
 
-    private Long orderId;
+    private UUID orderId;
 
     private String municipality;
     private Integer wardNumber;

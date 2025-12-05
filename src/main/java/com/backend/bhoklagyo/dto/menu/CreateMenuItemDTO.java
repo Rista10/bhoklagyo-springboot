@@ -9,5 +9,7 @@ public class CreateMenuItemDTO {
     private String description;
     private Double price;
     private String category;
-    private boolean isAvailable;
+    private Integer preparationTimeMins;
+    private Boolean veg;
+    private String imageKey;
 }

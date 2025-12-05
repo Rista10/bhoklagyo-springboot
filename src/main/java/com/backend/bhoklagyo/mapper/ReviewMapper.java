@@ -11,10 +11,11 @@ public class ReviewMapper {
     public static ReviewDTO toDTO(Review review) {
         ReviewDTO dto = new ReviewDTO();
         dto.setId(review.getId());
-        dto.setCustomerId(review.getCustomer().getId());
+        dto.setUserId(review.getUser().getId());
         dto.setRestaurantId(review.getRestaurant().getId());
         dto.setRating(review.getRating());
         dto.setComment(review.getComment());
+        dto.setOrderId(review.getOrder().getId());
         dto.setCreatedAt(review.getCreatedAt());
         return dto;
     }

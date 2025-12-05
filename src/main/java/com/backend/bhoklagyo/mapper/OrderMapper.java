@@ -3,7 +3,7 @@ package com.backend.bhoklagyo.mapper;
 import com.backend.bhoklagyo.dto.order.OrderDTO;
 import com.backend.bhoklagyo.dto.order.OrderItemDTO;
 import com.backend.bhoklagyo.model.Order;
-import com.backend.bhoklagyo.model.OrderItem;
+import com.backend.bhoklagyo.model.OrderItem;;
 
 import java.util.stream.Collectors;
 
@@ -15,14 +15,15 @@ public class OrderMapper {
         OrderDTO dto = new OrderDTO();
 
         dto.setId(order.getId());
-        dto.setCustomerId(order.getCustomer().getId());
         dto.setTotalAmount(order.getTotalAmount());
         dto.setDeliveryAddress(
     DeliveryAddressMapper.toResponseDTO(order.getDeliveryAddress())
 );
-
+        dto.setStatus(order.getStatus());
+        dto.setItemTotal(order.getItemTotal());
+        dto.setDeliveryCharge(order.getDeliveryCharge());
+        dto.setSpecialInstructions(order.getSpecialInstructions());
         dto.setCreatedAt(order.getCreatedAt());
-
         dto.setItems(
                 order.getOrderItems()
                         .stream()
@@ -36,10 +37,12 @@ public class OrderMapper {
     public static OrderItemDTO toItemDTO(OrderItem item) {
         OrderItemDTO dto = new OrderItemDTO();
         dto.setId(item.getId());
+        dto.setOrderId(item.getOrder().getId());
         dto.setMenuItemId(item.getMenuItem().getId());
         dto.setMenuItemName(item.getMenuItem().getName());
         dto.setQuantity(item.getQuantity());
         dto.setUnitPrice(item.getUnitPrice());
+        dto.setTotalPrice(item.getQuantity() * item.getUnitPrice());
         return dto;
     }
 }

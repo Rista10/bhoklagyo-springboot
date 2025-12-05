@@ -2,81 +2,98 @@ package com.backend.bhoklagyo.controller;
 
 import com.backend.bhoklagyo.dto.restaurant.RestaurantRequestDTO;
 import com.backend.bhoklagyo.dto.restaurant.RestaurantResponseDTO;
+import com.backend.bhoklagyo.dto.menu.MenuItemDTO;
 import com.backend.bhoklagyo.service.RestaurantService;
+import com.backend.bhoklagyo.service.MenuItemService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import com.backend.bhoklagyo.dto.order.OrderDTO;
+import com.backend.bhoklagyo.service.OrderService;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/restaurants")
+@CrossOrigin(origins = "http://localhost:5173")
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
+    private final MenuItemService menuItemService;
+    private final OrderService orderService;
 
-    public RestaurantController(RestaurantService restaurantService) {
-        this.restaurantService = restaurantService;
+    @PreAuthorize("hasRole('RESTAURANT_OWNER')")
+    @GetMapping("/{restaurantId}/orders")
+    public ResponseEntity<List<OrderDTO>> getOrdersForRestaurant(
+            @PathVariable UUID restaurantId, Authentication authentication) {
+
+        List<OrderDTO> orders = orderService.getOrdersByRestaurant(restaurantId);
+        return ResponseEntity.ok(orders);
     }
 
+    @GetMapping
+    public ResponseEntity<List<RestaurantResponseDTO>> getRestaurantsByLocation(
+            @RequestParam(required = false) Double lat,
+            @RequestParam(required = false, name = "long") Double lng,
+            @RequestParam(required = false) Double radius,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "10") int size
+    ) {
+        if (lat == null || lng == null || radius == null) {
+            return ResponseEntity.ok(restaurantService.getAllRestaurants(page, size));
+        }
+
+        return ResponseEntity.ok(
+                restaurantService.getNearbyRestaurants(lat, lng, radius)
+        );
+    }
+
+    @GetMapping("/{restaurantId}")
+    public ResponseEntity<RestaurantResponseDTO> getRestaurantById(
+            @PathVariable UUID restaurantId) {
+        return ResponseEntity.ok(restaurantService.getRestaurantById(restaurantId));
+    }
+
+
+    @PreAuthorize("hasRole('RESTAURANT_OWNER')")
     @PostMapping
     public ResponseEntity<RestaurantResponseDTO> createRestaurant(
             @RequestBody RestaurantRequestDTO request,
             Authentication authentication
     ) {
         return ResponseEntity.ok(
-            restaurantService.createRestaurant(request, authentication)
+                restaurantService.createRestaurant(request, authentication)
         );
     }
 
-
+    @PreAuthorize("hasRole('RESTAURANT_OWNER')")
     @PutMapping("/{restaurantId}")
     public ResponseEntity<RestaurantResponseDTO> updateRestaurant(
-            @PathVariable Long restaurantId,
+            @PathVariable UUID restaurantId,
             @RequestBody RestaurantRequestDTO request
     ) {
-        RestaurantResponseDTO updated = restaurantService.updateRestaurant(restaurantId, request);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(
+                restaurantService.updateRestaurant(restaurantId, request)
+        );
     }
 
-    @GetMapping
-    public ResponseEntity<List<RestaurantResponseDTO>> getAllRestaurants() {
-        List<RestaurantResponseDTO> restaurants = restaurantService.getAllRestaurants();
-        return ResponseEntity.ok(restaurants);
-    }
-
-    @GetMapping("/{restaurantId}")
-    public ResponseEntity<RestaurantResponseDTO> getRestaurantById(@PathVariable Long restaurantId) {
-        return restaurantService.getRestaurantById(restaurantId) != null
-                ? ResponseEntity.ok(restaurantService.getRestaurantById(restaurantId))
-                : ResponseEntity.notFound().build();
-    }
-
+    @PreAuthorize("hasRole('RESTAURANT_OWNER')")
     @DeleteMapping("/{restaurantId}")
-    public ResponseEntity<Void> deleteRestaurant(@PathVariable Long restaurantId) {
+    public ResponseEntity<Void> deleteRestaurant(@PathVariable UUID restaurantId) {
         restaurantService.deleteRestaurant(restaurantId);
         return ResponseEntity.noContent().build();
     }
 
-    // Search & filter
-    @GetMapping("/search")
-    public ResponseEntity<List<RestaurantResponseDTO>> searchRestaurants(
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String cuisine
-    ) {
-        List<RestaurantResponseDTO> results = restaurantService.searchRestaurants(name, cuisine);
-        return ResponseEntity.ok(results);
-    }
+    @PreAuthorize("hasRole('RESTAURANT_OWNER')")
+    @GetMapping("/owner/{userId}")
+    public ResponseEntity<List<RestaurantResponseDTO>> getRestaurantsByOwner(
+            @PathVariable UUID userId) {
 
-    // Nearby (commented out for now)
-    // @GetMapping("/nearby")
-    // public ResponseEntity<List<RestaurantResponseDTO>> getNearbyRestaurants(
-    //         @RequestParam double lat,
-    //         @RequestParam double lng,
-    //         @RequestParam double radius
-    // ) {
-    //     List<RestaurantResponseDTO> nearby = restaurantService.getNearby(lat, lng, radius);
-    //     return ResponseEntity.ok(nearby);
-    // }
+        return ResponseEntity.ok(restaurantService.getRestaurantsByOwner(userId));
+    }
 }

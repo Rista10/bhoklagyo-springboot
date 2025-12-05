@@ -1,0 +1,266 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="ristashrestha (generated)" id="1764581305243-1">
+        <createTable tableName="delivery_addresses">
+            <column name="id" type="BINARY(16)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="landmark" type="VARCHAR(255)"/>
+            <column name="latitude" type="DOUBLE"/>
+            <column name="longitude" type="DOUBLE"/>
+            <column name="municipality" type="VARCHAR(255)"/>
+            <column name="tole_name" type="VARCHAR(255)"/>
+            <column name="ward_number" type="INT"/>
+            <column name="order_id" type="BINARY(16)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-2">
+        <createTable tableName="delivery_persons">
+            <column name="id" type="BINARY(16)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_at" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="current_lat" type="DOUBLE"/>
+            <column name="current_long" type="DOUBLE"/>
+            <column name="is_available" type="BIT(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="license_number" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="vehicle_number" type="VARCHAR(255)"/>
+            <column name="user_id" type="BINARY(16)">
+                <constraints unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-3">
+        <createTable tableName="menu_items">
+            <column name="id" type="BINARY(16)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="category" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(500)"/>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="preparation_time_mins" type="INT"/>
+            <column name="price" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_veg" type="BIT(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="restaurant_id" type="BINARY(16)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-4">
+        <createTable tableName="order_items">
+            <column name="id" type="BINARY(16)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="quantity" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_item_price" type="DOUBLE"/>
+            <column name="unit_price" type="DOUBLE"/>
+            <column name="menu_item_id" type="BINARY(16)"/>
+            <column name="order_id" type="BINARY(16)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-5">
+        <createTable tableName="orders">
+            <column name="id" type="BINARY(16)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_at" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="delivery_charge" type="DOUBLE"/>
+            <column name="item_total" type="DOUBLE"/>
+            <column name="special_instructions" type="TEXT"/>
+            <column name="status" type="ENUM('CANCELLED', 'CONFIRMED', 'DELIVERED', 'PENDING', 'PICKED_UP', 'PREPARING')">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_amount" type="DOUBLE"/>
+            <column name="delivery_person_id" type="BINARY(16)"/>
+            <column name="restaurant_id" type="BINARY(16)"/>
+            <column name="user_id" type="BINARY(16)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-6">
+        <createTable tableName="restaurant_owners">
+            <column name="id" type="BINARY(16)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="bank_account_number" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="bank_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pan_number" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BINARY(16)">
+                <constraints unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-7">
+        <createTable tableName="restaurants">
+            <column name="id" type="BINARY(16)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="address" type="VARCHAR(255)"/>
+            <column name="closing_time" type="time">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cuisine_type" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="latitude" type="DOUBLE"/>
+            <column name="longitude" type="DOUBLE"/>
+            <column name="opening_time" type="time">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone_number" type="VARCHAR(255)"/>
+            <column name="rating" type="DOUBLE"/>
+            <column name="restaurant_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="owner_id" type="BINARY(16)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-8">
+        <createTable tableName="reviews">
+            <column name="id" type="BINARY(16)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="comment" type="VARCHAR(1000)"/>
+            <column name="created_at" type="datetime"/>
+            <column name="rating" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="order_id" type="BINARY(16)"/>
+            <column name="restaurant_id" type="BINARY(16)"/>
+            <column name="user_id" type="BINARY(16)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-9">
+        <createTable tableName="users">
+            <column name="id" type="BINARY(16)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="auth0id" type="VARCHAR(255)"/>
+            <column name="default_address" type="VARCHAR(255)"/>
+            <column name="default_lat" type="DOUBLE"/>
+            <column name="default_long" type="DOUBLE"/>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="full_name" type="VARCHAR(255)"/>
+            <column name="phone_number" type="VARCHAR(255)"/>
+            <column name="role" type="ENUM('CUSTOMER', 'DELIVERY_PERSON', 'RESTAURANT_OWNER')"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-10">
+        <createIndex associatedWith="" indexName="FK2m9qulf12xm537bku3jnrrbup" tableName="orders">
+            <column name="restaurant_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-11">
+        <createIndex associatedWith="" indexName="FK32ql8ubntj5uh44ph9659tiih" tableName="orders">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-12">
+        <createIndex associatedWith="" indexName="FKbioxgbv59vetrxe0ejfubep1w" tableName="order_items">
+            <column name="order_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-13">
+        <createIndex associatedWith="" indexName="FKcgy7qjc1r99dp117y9en6lxye" tableName="reviews">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-14">
+        <createIndex associatedWith="" indexName="FKdtfg1f49yr5yye2fpl2xid2xo" tableName="order_items">
+            <column name="menu_item_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-15">
+        <createIndex associatedWith="" indexName="FKhaqtoboitpl0n541y0sc753my" tableName="menu_items">
+            <column name="restaurant_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-16">
+        <createIndex associatedWith="" indexName="FKlubga8dmt0t3sqvgmsp3tr7ws" tableName="orders">
+            <column name="delivery_person_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-17">
+        <createIndex associatedWith="" indexName="FKm3p0u8w6vv8wps5a1inobchks" tableName="restaurants">
+            <column name="owner_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-18">
+        <createIndex associatedWith="" indexName="FKqwgq1lxgahsxdspnwqfac6sv6" tableName="reviews">
+            <column name="order_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-19">
+        <createIndex associatedWith="" indexName="FKsu8ow2q842enesfbqphjrfi5g" tableName="reviews">
+            <column name="restaurant_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-20">
+        <addForeignKeyConstraint baseColumnNames="restaurant_id" baseTableName="orders" constraintName="FK2m9qulf12xm537bku3jnrrbup" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="restaurants" validate="true"/>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-21">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="orders" constraintName="FK32ql8ubntj5uh44ph9659tiih" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="users" validate="true"/>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-22">
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="delivery_addresses" constraintName="FKa7hq9i1ex68litk9wdfgsp84j" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="orders" validate="true"/>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-23">
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="order_items" constraintName="FKbioxgbv59vetrxe0ejfubep1w" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="orders" validate="true"/>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-24">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="reviews" constraintName="FKcgy7qjc1r99dp117y9en6lxye" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="users" validate="true"/>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-25">
+        <addForeignKeyConstraint baseColumnNames="menu_item_id" baseTableName="order_items" constraintName="FKdtfg1f49yr5yye2fpl2xid2xo" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="menu_items" validate="true"/>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-26">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="restaurant_owners" constraintName="FKf1tc4qwjnp38k2u063ui739w" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="users" validate="true"/>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-27">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="delivery_persons" constraintName="FKfrxt1p46rlcff256odj9gm287" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="users" validate="true"/>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-28">
+        <addForeignKeyConstraint baseColumnNames="restaurant_id" baseTableName="menu_items" constraintName="FKhaqtoboitpl0n541y0sc753my" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="restaurants" validate="true"/>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-29">
+        <addForeignKeyConstraint baseColumnNames="delivery_person_id" baseTableName="orders" constraintName="FKlubga8dmt0t3sqvgmsp3tr7ws" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="delivery_persons" validate="true"/>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-30">
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="restaurants" constraintName="FKm3p0u8w6vv8wps5a1inobchks" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="restaurant_owners" validate="true"/>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-31">
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="reviews" constraintName="FKqwgq1lxgahsxdspnwqfac6sv6" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="orders" validate="true"/>
+    </changeSet>
+    <changeSet author="ristashrestha (generated)" id="1764581305243-32">
+        <addForeignKeyConstraint baseColumnNames="restaurant_id" baseTableName="reviews" constraintName="FKsu8ow2q842enesfbqphjrfi5g" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="restaurants" validate="true"/>
+    </changeSet>
+</databaseChangeLog>

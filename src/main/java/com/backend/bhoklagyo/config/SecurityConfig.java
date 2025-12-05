@@ -2,20 +2,18 @@ package com.backend.bhoklagyo.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import java.util.stream.Collectors;
-import java.util.List;
+import org.springframework.security.config.Customizer;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
 
-import static org.springframework.security.config.Customizer.withDefaults;
+import java.util.Arrays;
 
 @Configuration
 @EnableMethodSecurity
@@ -26,44 +24,61 @@ public class SecurityConfig {
 
         http
             .csrf(csrf -> csrf.disable())
+            .cors(Customizer.withDefaults())
             .authorizeHttpRequests(auth -> auth
-                
-                // Public endpoints (restaurant browsing)
-                .requestMatchers(
+                .requestMatchers(HttpMethod.GET,
+                        "/restaurants",
                         "/restaurants/**",
-                        "/menu-items/**",
-                        "/reviews/**"
+                        "/menu/**",
+                        "/files/view-url"
                 ).permitAll()
-
-                // CUSTOMER
                 .requestMatchers(
-                        "/orders/**",
                         "/users/me/**",
                         "/role-requests/**"
                 ).authenticated()
-
-                // // RESTAURANT OWNER
-                .requestMatchers(
-                    "/restaurants",
-                    "/restaurants/*/menu-items",
-                    "/restaurants/*/menu-items/**",
-                    "/menu-items/**"
-                ).hasAuthority("RESTAURANT_OWNER")
-
-
-                // // DELIVERY PERSON
-                // .requestMatchers(
-                //         "/deliveries/**",
-                //         "/my/deliveries"
-                // ).hasRole("DELIVERY PERSON")
-
-                // .anyRequest().authenticated()
+                .requestMatchers(HttpMethod.GET, "/files/signed-url").authenticated()
+                .anyRequest().authenticated()
             )
-            .oauth2ResourceServer(oauth2 ->
-                oauth2.jwt()
-        );
+            .oauth2ResourceServer(oauth2 -> oauth2
+                .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticatorConverter()))
+            );
 
         return http.build();
     }
 
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticatorConverter() {
+        JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        authoritiesConverter.setAuthoritiesClaimName("https://bhoklagyo.app/roles");
+        authoritiesConverter.setAuthorityPrefix("ROLE_");
+
+        JwtAuthenticationConverter jwtConverter = new JwtAuthenticationConverter();
+        jwtConverter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
+
+        return jwtConverter;
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.setAllowedOrigins(Arrays.asList(
+                "http://localhost:5173"
+        ));
+
+        config.setAllowedMethods(Arrays.asList(
+                "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
+        ));
+
+        config.setAllowedHeaders(Arrays.asList(
+                "Authorization", "Content-Type"
+        ));
+
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
+    }
 }

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/role-requests")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class RoleRequestController {
 
     private final RestaurantOwnerRepository restaurantOwnerRepository;

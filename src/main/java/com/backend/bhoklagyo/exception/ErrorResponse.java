@@ -1,4 +1,4 @@
-package com.customer.exception;
+package com.backend.bhoklagyo.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

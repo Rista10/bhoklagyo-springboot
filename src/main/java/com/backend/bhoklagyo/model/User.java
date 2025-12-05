@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import com.backend.bhoklagyo.enums.Role;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -15,8 +16,8 @@ import com.backend.bhoklagyo.enums.Role;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id; 
 
     private String auth0Id;
 
@@ -31,4 +32,14 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(name = "default_lat",nullable = true)
+    private Double defaultLat;
+
+    @Column(name = "default_long",nullable = true)
+    private Double defaultLong;
+
+    @Column(name = "default_address",nullable = true)
+    private String defaultAddress;
+
+    
 }

@@ -7,6 +7,7 @@ import java.time.LocalTime;
 import jakarta.persistence.*;
 import java.util.List;
 import com.backend.bhoklagyo.model.Owner;
+import java.util.UUID;
 
 @Entity
 @Table(name = "restaurants")
@@ -16,8 +17,8 @@ import com.backend.bhoklagyo.model.Owner;
 public class Restaurant {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id; 
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)

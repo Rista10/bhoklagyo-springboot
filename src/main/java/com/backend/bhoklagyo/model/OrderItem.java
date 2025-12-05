@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.UUID;
 
 @Entity
 @Table(name = "order_items")
@@ -14,8 +15,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class OrderItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id; 
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")

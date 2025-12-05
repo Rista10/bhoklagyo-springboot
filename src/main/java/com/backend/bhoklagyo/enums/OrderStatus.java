@@ -1,4 +1,4 @@
-package com.backend.bhoklagyo.model;
+package com.backend.bhoklagyo.enums;
 
 public enum OrderStatus {
     PENDING,

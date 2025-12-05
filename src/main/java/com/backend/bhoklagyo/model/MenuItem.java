@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import java.util.UUID;
 
 @Entity
 @Table(name = "menu_items")
@@ -13,8 +14,8 @@ import lombok.AllArgsConstructor;
 public class MenuItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; 
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id; 
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -29,7 +30,7 @@ public class MenuItem {
     private String category;
 
     @Column(name = "is_veg", nullable = false)
-    private Boolean isVeg = false;
+    private Boolean veg;
 
     @Column(name = "preparation_time_mins")
     private Integer preparationTimeMins;
@@ -37,4 +38,7 @@ public class MenuItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
+
+    @Column(name = "image_key")
+    private String imageKey;
 }
