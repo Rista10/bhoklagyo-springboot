@@ -81,6 +81,7 @@ public class RestaurantService {
                     restaurant.setPhoneNumber(request.getPhoneNumber());
                     restaurant.setOpeningTime(request.getOpeningTime());
                     restaurant.setClosingTime(request.getClosingTime());
+                    restaurant.setLogoKey(request.getLogoKey());
 
                     return restaurantRepository.save(restaurant);
                 })
@@ -104,7 +105,8 @@ public class RestaurantService {
     public Page<MenuItemDTO> getFilteredMenu(
             UUID restaurantId,
             String category,
-            Double price,
+            Double maxPrice,
+            Double minPrice,
             Integer preparationTime,
             int page,
             int size
@@ -114,7 +116,8 @@ public class RestaurantService {
         Page<MenuItem> menuPage = menuItemRepository.findFiltered(
                 restaurantId,
                 category,
-                price,
+                maxPrice,
+                minPrice,
                 preparationTime,
                 pageable
         );

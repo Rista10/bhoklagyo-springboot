@@ -19,4 +19,5 @@ public class RestaurantRequestDTO {
     private String phoneNumber;
     private LocalTime openingTime;
     private LocalTime closingTime;
+    private String logoKey;
 }

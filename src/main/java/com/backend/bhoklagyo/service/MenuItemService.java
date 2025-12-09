@@ -27,7 +27,8 @@ public class MenuItemService {
     public Page<MenuItemDTO> getMenuByRestaurantFiltered(
             UUID restaurantId,
             String category,
-            Double price,
+            Double maxPrice,
+            Double minPrice,
             Integer preparationTime,
             int page,
             int size
@@ -37,7 +38,8 @@ public class MenuItemService {
         Page<MenuItem> menuPage = menuItemRepository.findFiltered(
                 restaurantId,
                 category,
-                price,
+                maxPrice,
+                minPrice,
                 preparationTime,
                 pageable
         );
@@ -71,6 +73,9 @@ public class MenuItemService {
         item.setDescription(dto.getDescription());
         item.setPrice(dto.getPrice());
         item.setCategory(dto.getCategory());
+        item.setVeg(dto.getVeg());
+        item.setPreparationTimeMins(dto.getPreparationTimeMins());
+        item.setImageKey(dto.getImageKey());
 
         return MenuItemMapper.toDTO(menuItemRepository.save(item));
     }
@@ -110,4 +115,14 @@ public class MenuItemService {
         return menuItemRepository.findById(id)
                 .orElseThrow(() -> new MenuItemNotFoundException("Menu item not found with id: " + id));
     }
+
+    public Page<MenuItemDTO> searchMenuItemsByName(String name, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<MenuItem> menuItems = menuItemRepository
+                .findByNameContainingIgnoreCase(name, pageable);
+
+        return menuItems.map(MenuItemMapper::toDTO);
+    }
+
 }

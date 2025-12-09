@@ -54,4 +54,7 @@ public class Restaurant {
 
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<MenuItem> menu;
+
+    @Column(name = "logo_key")
+    private String logoKey;
 }

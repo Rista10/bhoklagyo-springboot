@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface MenuItemRepository extends JpaRepository<MenuItem, UUID> {
 
-
+    Page<MenuItem> findByNameContainingIgnoreCase(String name, Pageable pageable);
     Page<MenuItem> findByCategoryIgnoreCase(String category, Pageable pageable);
     MenuItem findByIdAndRestaurantId(UUID id, UUID restaurantId);
     List<MenuItem> findAllByIdIn(List<UUID> ids);
@@ -22,13 +22,15 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, UUID> {
     SELECT m FROM MenuItem m
     WHERE m.restaurant.id = :restaurantId
         AND (:category IS NULL OR m.category = :category)
-        AND (:price IS NULL OR m.price <= :price)
+        AND (:maxPrice IS NULL OR m.price <= :maxPrice)
+        AND (:minPrice IS NULL OR m.price >= :minPrice)
         AND (:preparationTimeMins IS NULL OR m.preparationTimeMins <= :preparationTimeMins)
     """)
     Page<MenuItem> findFiltered(
             @Param("restaurantId") UUID restaurantId,
             @Param("category") String category,
-            @Param("price") Double price,
+            @Param("maxPrice") Double maxPrice,
+            @Param("minPrice") Double minPrice,
             @Param("preparationTimeMins") Integer preparationTimeMins,
             Pageable pageable
     );

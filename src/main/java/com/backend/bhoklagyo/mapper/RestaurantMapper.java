@@ -25,6 +25,7 @@ public class RestaurantMapper {
         dto.setPhoneNumber(restaurant.getPhoneNumber());
         dto.setOpeningTime(restaurant.getOpeningTime());
         dto.setClosingTime(restaurant.getClosingTime());
+        dto.setLogoKey(restaurant.getLogoKey());
         
 
         return dto;
@@ -42,6 +43,7 @@ public class RestaurantMapper {
         restaurant.setPhoneNumber(dto.getPhoneNumber());
         restaurant.setOpeningTime(dto.getOpeningTime());
         restaurant.setClosingTime(dto.getClosingTime());
+        restaurant.setLogoKey(dto.getLogoKey());
 
         return restaurant;
     }
