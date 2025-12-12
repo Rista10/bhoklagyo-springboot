@@ -18,6 +18,8 @@ import com.backend.bhoklagyo.exception.InvalidInputException;
 import com.backend.bhoklagyo.service.AuthService;
 import com.backend.bhoklagyo.model.User;
 import com.backend.bhoklagyo.repository.UserRepository;
+import com.backend.bhoklagyo.service.SSEEmitterService;
+
 
 import java.util.UUID;
 import java.time.LocalDateTime;
@@ -38,6 +40,7 @@ public class OrderService {
     private final DeliveryAddressRepository deliveryAddressRepo;
     private final UserRepository userRepository;
     private final AuthService authService;
+    private final SSEEmitterService sseEmitterService;
 
     @Transactional
     public OrderDTO createOrder(CreateOrderDTO dto, Authentication authentication) {
@@ -120,15 +123,37 @@ public class OrderService {
         return OrderMapper.toDTO(order);
     }
 
+    public List<UUID> getNonCompletedOrderIdsByUser(UUID userId) {
+        return orderRepo.findByUserIdAndStatusNot(userId, OrderStatus.COMPLETED)
+                .stream()
+                .map(Order::getId)
+                .toList();
+    }
+
+
     public OrderDTO updateOrderStatus(UUID orderId, String status) {
         Order order = orderRepo.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
-        order.setStatus(OrderStatus.valueOf(status.toUpperCase()));
+        OrderStatus newStatus = OrderStatus.valueOf(status.toUpperCase());
+
+        // 🔒 Enforce allowed transitions
+        if (!order.getStatus().canTransitionTo(newStatus)) {
+            throw new IllegalStateException(
+                "Cannot change order status from " + order.getStatus() + " to " + newStatus
+            );
+        }
+
+        order.setStatus(newStatus);
         orderRepo.save(order);
+
+        // Notify only the order owner
+        sseEmitterService.sendUpdate(order);
 
         return OrderMapper.toDTO(order);
     }
+
+
 
     public List<OrderDTO> getOrdersByCustomer(UUID customerId) {
         List<Order> orders = orderRepo.findByUserId(customerId);

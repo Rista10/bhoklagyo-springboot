@@ -44,6 +44,7 @@ public class RestaurantController {
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "10") int size
     ) {
+        System.out.println("Fetching restaurants with params - lat: " + lat + ", lng: " + lng + ", radius: " + radius);
         if (lat == null || lng == null || radius == null) {
             return ResponseEntity.ok(restaurantService.getAllRestaurants(page, size));
         }

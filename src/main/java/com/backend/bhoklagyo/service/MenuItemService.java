@@ -96,6 +96,14 @@ public class MenuItemService {
         return menuPage.map(MenuItemMapper::toDTO);
     }
 
+    public Page<MenuItemDTO> getMenuByVeg(Boolean veg, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<MenuItem> menuPage = menuItemRepository.findByVeg(veg, pageable);
+
+        return menuPage.map(MenuItemMapper::toDTO);
+    }
+
     public Page<MenuItemDTO> getAllMenuItemsPaginated(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<MenuItem> menuPage = menuItemRepository.findAll(pageable);

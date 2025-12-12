@@ -64,11 +64,16 @@ public class MenuItemController {
     @GetMapping("/menu")
     public Page<MenuItemDTO> getMenuByCategory(
             @RequestParam(required = false) String category,
+            @RequestParam(required = false) Boolean veg,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
         if (category != null && !category.isBlank()) {
-            return menuItemService.getMenuByCategory(category, page, size);
+            return menuItemService.getMenuByCategory(category,page, size);
+        }
+
+        if (Boolean.TRUE.equals(veg)) {
+            return menuItemService.getMenuByVeg(veg, page, size);
         }
 
         return menuItemService.getAllMenuItemsPaginated(page, size);

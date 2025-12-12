@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 public interface MenuItemRepository extends JpaRepository<MenuItem, UUID> {
 
     Page<MenuItem> findByNameContainingIgnoreCase(String name, Pageable pageable);
+    Page<MenuItem> findByVeg(Boolean veg, Pageable pageable);
     Page<MenuItem> findByCategoryIgnoreCase(String category, Pageable pageable);
     MenuItem findByIdAndRestaurantId(UUID id, UUID restaurantId);
     List<MenuItem> findAllByIdIn(List<UUID> ids);

@@ -30,7 +30,8 @@ public class SecurityConfig {
                         "/restaurants",
                         "/restaurants/**",
                         "/menu/**",
-                        "/files/view-url"
+                        "/files/view-url",
+                        "/subscribe/**"
                 ).permitAll()
                 .requestMatchers(
                         "/users/me/**",

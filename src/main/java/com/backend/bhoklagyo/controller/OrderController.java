@@ -31,6 +31,12 @@ public class OrderController {
         return orderService.getOrder(orderId);
     }
 
+    @GetMapping("/user/{userId}/active")
+    public List<UUID> getActiveOrderIdsByUser(@PathVariable UUID userId) {
+        return orderService.getNonCompletedOrderIdsByUser(userId);
+    }
+
+
     @PreAuthorize("hasRole('RESTAURANT_OWNER')")
     @PatchMapping("/{orderId}/status")
     public OrderDTO updateStatus(

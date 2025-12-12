@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.backend.bhoklagyo.model.User;
 import com.backend.bhoklagyo.model.Restaurant;
 import org.springframework.data.jpa.repository.Query;
+import com.backend.bhoklagyo.enums.OrderStatus;
 
 import java.util.List;
 import java.util.UUID;
@@ -34,5 +35,8 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
         ORDER BY month
     """)
     List<Object[]> monthlyRateByRestaurant(UUID restaurantId);
+
+    List<Order> findByUserIdAndStatusNot(UUID userId, OrderStatus status);
+
 
 }
