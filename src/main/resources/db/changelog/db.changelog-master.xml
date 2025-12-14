@@ -11,5 +11,5 @@
     <include file="db/changelog/2025-12-01-initial-schema.xml"/>
     <include file="db/changelog/2025-12-04-add-image-key-to-menu-item.xml"/>
     <include file="db/changelog/2025-12-08-add-logo-key-to-restaurants.xml"/>
-   
+    <!-- <include file="db/changelog/2025-12-12-create-notification-table.xml"/> -->
 </databaseChangeLog>

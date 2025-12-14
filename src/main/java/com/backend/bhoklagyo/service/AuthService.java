@@ -20,4 +20,8 @@ public class AuthService {
         return userRepository.findByAuth0Id(auth0Id)
                 .orElseThrow(() -> new RuntimeException("User not found for auth0Id: " + auth0Id));
     }
+
+    public String getCurrentUserId(Authentication authentication) {
+        return getCurrentUser(authentication).getId().toString();
+    }
 }

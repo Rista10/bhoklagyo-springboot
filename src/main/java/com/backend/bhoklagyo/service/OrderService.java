@@ -41,6 +41,7 @@ public class OrderService {
     private final UserRepository userRepository;
     private final AuthService authService;
     private final SSEEmitterService sseEmitterService;
+    private final NotificationRepository notificationRepo;
 
     @Transactional
     public OrderDTO createOrder(CreateOrderDTO dto, Authentication authentication) {
@@ -147,9 +148,19 @@ public class OrderService {
         order.setStatus(newStatus);
         orderRepo.save(order);
 
-        // Notify only the order owner
+         // Notify only the order owner
         sseEmitterService.sendUpdate(order);
 
+        Notification notif = new Notification();
+        notif.setUser(order.getUser());
+        notif.setTitle("Order update");
+        notif.setMessage("Order " + order.getId() + " is now " + newStatus);
+        notif.setCreatedAt(LocalDateTime.now());
+        notif.setRead(false);
+
+        notificationRepo.save(notif);
+
+    
         return OrderMapper.toDTO(order);
     }
 
