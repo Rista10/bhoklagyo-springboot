@@ -48,31 +48,25 @@ public class OrderService {
 
         User user = authService.getCurrentUser(authentication);
 
-        // User must be a CUSTOMER
         if (user.getRole() != com.backend.bhoklagyo.enums.Role.CUSTOMER) {
             throw new RuntimeException("Only customers can create orders.");
         }
 
-        // Fetch restaurant
         Restaurant restaurant = restaurantRepo.findById(dto.getRestaurantId())
                 .orElseThrow(() -> new RuntimeException("Restaurant not found"));
 
-        // Collect all menu item in one shot 
         List<UUID> menuItemIds = dto.getItems().stream()
-            .map(CreateOrderItemDTO::getMenuItemId)
-            .toList();
+                .map(CreateOrderItemDTO::getMenuItemId)
+                .toList();
 
-        // Fetch all menu items at once 
         Map<UUID, MenuItem> menuItemMap = menuItemRepo.findAllByIdIn(menuItemIds)
-            .stream()
-            .collect(Collectors.toMap(MenuItem::getId, Function.identity()));
+                .stream()
+                .collect(Collectors.toMap(MenuItem::getId, Function.identity()));
 
-        // Prepare order items
         List<OrderItem> orderItems = new ArrayList<>();
         double itemTotal = 0.0;
 
         for (var itemDTO : dto.getItems()) {
-
             MenuItem menuItem = menuItemMap.get(itemDTO.getMenuItemId());
 
             if (menuItem == null) {
@@ -84,15 +78,14 @@ public class OrderService {
             orderItem.setQuantity(itemDTO.getQuantity());
             orderItem.setUnitPrice(menuItem.getPrice());
 
-            itemTotal += menuItem.getPrice() * itemDTO.getQuantity();
+            double lineTotal = menuItem.getPrice() * itemDTO.getQuantity();
+            itemTotal += lineTotal;
+
             orderItems.add(orderItem);
         }
 
-
-        // Delivery charge logic (static for now)
         double deliveryCharge = 50.0;
 
-        // Create the order
         Order order = new Order();
         order.setUser(user);
         order.setRestaurant(restaurant);
@@ -103,20 +96,19 @@ public class OrderService {
         order.setSpecialInstructions(dto.getSpecialInstructions());
         order.setCreatedAt(LocalDateTime.now());
 
-        
         orderItems.forEach(item -> item.setOrder(order));
         order.setOrderItems(orderItems);
 
-        final Order savedOrder = orderRepo.save(order);
+        Order savedOrder = orderRepo.save(order);
 
-        DeliveryAddress address =
-                DeliveryAddressMapper.toEntity(dto.getDeliveryAddress(), order);
-
+        DeliveryAddress address = DeliveryAddressMapper.toEntity(dto.getDeliveryAddress(), order);
         deliveryAddressRepo.save(address);
         order.setDeliveryAddress(address);
 
         return OrderMapper.toDTO(order);
     }
+
+
 
     public OrderDTO getOrder(UUID orderId) {
         Order order = orderRepo.findById(orderId)

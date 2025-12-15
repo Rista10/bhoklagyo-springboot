@@ -47,8 +47,26 @@ public class MenuItemService {
         return menuPage.map(MenuItemMapper::toDTO);
     }
 
+    public Page<MenuItemDTO> getMenu(
+            String name,
+            Boolean veg,
+            String category,
+            int page,
+            int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
 
-   
+        Page<MenuItem> menuPage = menuItemRepository.filterMenuItems(
+                name,
+                veg,
+                category,
+                pageable
+        );
+
+        return menuPage.map(MenuItemMapper::toDTO);
+    }
+
+
     public MenuItemDTO getMenuItem(UUID itemId) {
         MenuItem item = menuItemRepository.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("Menu item not found"));
@@ -87,29 +105,16 @@ public class MenuItemService {
         menuItemRepository.delete(item);
     }
 
-
-    public Page<MenuItemDTO> getMenuByCategory(String category, int page, int size) {
+    public Page<MenuItemDTO> getMenu(String category, Boolean veg, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-
-        Page<MenuItem> menuPage = menuItemRepository.findByCategoryIgnoreCase(category, pageable);
-
+        Page<MenuItem> menuPage = menuItemRepository.filterMenuItems(
+                null, // name filter not used here
+                veg,
+                category,
+                pageable
+        );
         return menuPage.map(MenuItemMapper::toDTO);
     }
-
-    public Page<MenuItemDTO> getMenuByVeg(Boolean veg, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-
-        Page<MenuItem> menuPage = menuItemRepository.findByVeg(veg, pageable);
-
-        return menuPage.map(MenuItemMapper::toDTO);
-    }
-
-    public Page<MenuItemDTO> getAllMenuItemsPaginated(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<MenuItem> menuPage = menuItemRepository.findAll(pageable);
-        return menuPage.map(MenuItemMapper::toDTO);
-    }
-
     public List<MenuItemDTO> getAllMenuItems() {
         return menuItemRepository.findAll()
                 .stream()
@@ -117,20 +122,10 @@ public class MenuItemService {
                 .toList();
     }
 
-
-
     public MenuItem getMenuItemById(UUID id) {
         return menuItemRepository.findById(id)
                 .orElseThrow(() -> new MenuItemNotFoundException("Menu item not found with id: " + id));
     }
 
-    public Page<MenuItemDTO> searchMenuItemsByName(String name, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-
-        Page<MenuItem> menuItems = menuItemRepository
-                .findByNameContainingIgnoreCase(name, pageable);
-
-        return menuItems.map(MenuItemMapper::toDTO);
-    }
 
 }

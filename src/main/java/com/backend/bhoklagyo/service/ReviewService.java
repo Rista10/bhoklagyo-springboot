@@ -13,9 +13,7 @@ import com.backend.bhoklagyo.model.Order;
 import com.backend.bhoklagyo.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
-import com.backend.bhoklagyo.service.AuthService;
 import java.util.Comparator;
 
 import java.time.LocalDateTime;
@@ -41,7 +39,7 @@ public class ReviewService {
         // Check user orders for this restaurant
         List<Order> orders = orderRepo.findByUserAndRestaurant(user, restaurant);
         if (orders.isEmpty()) {
-            throw new RuntimeException("Cannot post review. User has not ordered from this restaurant.");
+            throw new RuntimeException("You must order from this restaurant before posting a review");
         }
 
         // Link review to the latest order (optional)

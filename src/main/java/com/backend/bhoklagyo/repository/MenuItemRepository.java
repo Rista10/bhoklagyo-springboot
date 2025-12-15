@@ -11,13 +11,19 @@ import org.springframework.data.domain.Pageable;
 
 public interface MenuItemRepository extends JpaRepository<MenuItem, UUID> {
 
-    Page<MenuItem> findByNameContainingIgnoreCase(String name, Pageable pageable);
-    Page<MenuItem> findByVeg(Boolean veg, Pageable pageable);
-    Page<MenuItem> findByCategoryIgnoreCase(String category, Pageable pageable);
-    MenuItem findByIdAndRestaurantId(UUID id, UUID restaurantId);
+    @Query("""
+        SELECT m FROM MenuItem m
+        WHERE (:name IS NULL OR LOWER(m.name) LIKE LOWER(CONCAT('%', :name, '%')))
+          AND (:veg IS NULL OR m.veg = :veg)
+          AND (:category IS NULL OR LOWER(m.category) = LOWER(:category))
+    """)
+    Page<MenuItem> filterMenuItems(
+            @Param("name") String name,
+            @Param("veg") Boolean veg,
+            @Param("category") String category,
+            Pageable pageable
+    );
     List<MenuItem> findAllByIdIn(List<UUID> ids);
-    Page<MenuItem> findAll(Pageable pageable);
-
 
      @Query("""
     SELECT m FROM MenuItem m

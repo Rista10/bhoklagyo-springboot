@@ -62,31 +62,13 @@ public class MenuItemController {
     }
 
     @GetMapping("/menu")
-    public Page<MenuItemDTO> getMenuByCategory(
-            @RequestParam(required = false) String category,
+    public Page<MenuItemDTO> getMenu(
+            @RequestParam(required = false) String name,
             @RequestParam(required = false) Boolean veg,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-
-        if (category != null && !category.isBlank()) {
-            return menuItemService.getMenuByCategory(category,page, size);
-        }
-
-        if (Boolean.TRUE.equals(veg)) {
-            return menuItemService.getMenuByVeg(veg, page, size);
-        }
-
-        return menuItemService.getAllMenuItemsPaginated(page, size);
-    }
-
-    @GetMapping("/menu/search")
-    public Page<MenuItemDTO> searchMenuItems(
-            @RequestParam String q,
+            @RequestParam(required = false) String category,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return menuItemService.searchMenuItemsByName(q, page, size);
+        return menuItemService.getMenu(name, veg, category, page, size);
     }
-
-
 }
