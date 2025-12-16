@@ -15,4 +15,5 @@ public class MenuItemDTO {
     private boolean isVeg;
     private String imageKey;
     private UUID restaurantId;
+    private String imageUrl;
 }

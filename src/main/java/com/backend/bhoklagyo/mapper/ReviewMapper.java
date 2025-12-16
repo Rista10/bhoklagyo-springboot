@@ -10,15 +10,18 @@ public class ReviewMapper {
     public static ReviewDTO toDTO(Review review) {
         ReviewDTO dto = new ReviewDTO();
         dto.setId(review.getId());
-        dto.setUserId(review.getUser() != null ? review.getUser().getId() : null);
+
+        if (review.getUser() != null) {
+            dto.setUserId(review.getUser().getId());
+            dto.setUserEmail(review.getUser().getEmail()); // or getUsername()
+        }
         dto.setRestaurantId(review.getRestaurant() != null ? review.getRestaurant().getId() : null);
         dto.setRating(review.getRating());
         dto.setComment(review.getComment());
-        dto.setOrderId(review.getOrder() != null ? review.getOrder().getId() : null); // null-safe
         dto.setCreatedAt(review.getCreatedAt());
+
         return dto;
     }
-
     public static Review toEntity(CreateReviewDTO dto) {
         Review review = new Review();
         review.setRating(dto.getRating());

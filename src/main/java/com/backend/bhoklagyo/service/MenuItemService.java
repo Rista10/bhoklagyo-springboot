@@ -1,5 +1,6 @@
 package com.backend.bhoklagyo.service;
 
+import com.backend.bhoklagyo.dto.menu.MenuFilterRequest;
 import com.backend.bhoklagyo.dto.menu.MenuItemDTO;
 import com.backend.bhoklagyo.dto.menu.CreateMenuItemDTO;
 import com.backend.bhoklagyo.mapper.MenuItemMapper;
@@ -26,40 +27,28 @@ public class MenuItemService {
 
     public Page<MenuItemDTO> getMenuByRestaurantFiltered(
             UUID restaurantId,
-            String category,
-            Double maxPrice,
-            Double minPrice,
-            Integer preparationTime,
-            int page,
-            int size
+            MenuFilterRequest request
     ) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
         Page<MenuItem> menuPage = menuItemRepository.findFiltered(
                 restaurantId,
-                category,
-                maxPrice,
-                minPrice,
-                preparationTime,
+                request.getCategory(),
+                request.getMaxPrice(),
+                request.getMinPrice(),
+                request.getPreparationTime(),
                 pageable
         );
 
         return menuPage.map(MenuItemMapper::toDTO);
     }
 
-    public Page<MenuItemDTO> getMenu(
-            String name,
-            Boolean veg,
-            String category,
-            int page,
-            int size
-    ) {
-        Pageable pageable = PageRequest.of(page, size);
-
+    public Page<MenuItemDTO> getMenu(MenuFilterRequest request) {
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
         Page<MenuItem> menuPage = menuItemRepository.filterMenuItems(
-                name,
-                veg,
-                category,
+                request.getName(),
+                request.getVeg(),
+                request.getCategory(),
                 pageable
         );
 
@@ -105,16 +94,7 @@ public class MenuItemService {
         menuItemRepository.delete(item);
     }
 
-    public Page<MenuItemDTO> getMenu(String category, Boolean veg, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<MenuItem> menuPage = menuItemRepository.filterMenuItems(
-                null, // name filter not used here
-                veg,
-                category,
-                pageable
-        );
-        return menuPage.map(MenuItemMapper::toDTO);
-    }
+
     public List<MenuItemDTO> getAllMenuItems() {
         return menuItemRepository.findAll()
                 .stream()

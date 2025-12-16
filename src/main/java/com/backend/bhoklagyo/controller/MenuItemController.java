@@ -6,10 +6,11 @@ import com.backend.bhoklagyo.service.MenuItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.Page;
+import com.backend.bhoklagyo.dto.menu.MenuFilterRequest;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -21,27 +22,28 @@ public class MenuItemController {
 
     @PreAuthorize("hasRole('RESTAURANT_OWNER')")
     @PostMapping("/restaurants/{restaurantId}/menu")
-    public MenuItemDTO createMenuItem(@PathVariable UUID restaurantId,
-                                      @RequestBody CreateMenuItemDTO dto) {
-        return menuItemService.createMenuItem(restaurantId, dto);
+    public ResponseEntity<MenuItemDTO> createMenuItem(
+            @PathVariable UUID restaurantId,
+            @RequestBody CreateMenuItemDTO dto
+    ) {
+        MenuItemDTO created = menuItemService.createMenuItem(restaurantId, dto);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(created);
     }
 
-    @GetMapping("/restaurants/{restaurantId}/menu")
-    public Page<MenuItemDTO> getMenu(
-        @PathVariable UUID restaurantId,
-        @RequestParam(required = false) String category,
-        @RequestParam(required = false) Double maxPrice,
-        @RequestParam(required = false) Double minPrice,
-        @RequestParam(required = false) Integer preparationTime,
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size
+
+    @PostMapping("/restaurants/{restaurantId}/menu/search")
+    public ResponseEntity<Page<MenuItemDTO>> getMenu(
+            @PathVariable UUID restaurantId,
+            @RequestBody MenuFilterRequest request
     ) {
-        return menuItemService.getMenuByRestaurantFiltered(
-                restaurantId, category, maxPrice, minPrice, preparationTime, page, size
+        return ResponseEntity.ok(
+                menuItemService.getMenuByRestaurantFiltered(restaurantId, request)
         );
     }
 
-   
     @GetMapping("/menu/{id}")
     public MenuItemDTO getMenuItem(@PathVariable UUID id) {
         return menuItemService.getMenuItem(id);
@@ -61,14 +63,12 @@ public class MenuItemController {
         menuItemService.deleteMenuItem(id);
     }
 
-    @GetMapping("/menu")
-    public Page<MenuItemDTO> getMenu(
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) Boolean veg,
-            @RequestParam(required = false) String category,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+    @PostMapping("/menu")
+    public ResponseEntity<Page<MenuItemDTO>> getMenu(
+            @RequestBody MenuFilterRequest request
     ) {
-        return menuItemService.getMenu(name, veg, category, page, size);
+        Page<MenuItemDTO> menu = menuItemService.getMenu(request);
+        return ResponseEntity.ok(menu);
     }
+
 }

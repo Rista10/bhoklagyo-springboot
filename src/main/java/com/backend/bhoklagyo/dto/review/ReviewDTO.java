@@ -8,9 +8,8 @@ import java.time.LocalDateTime;
 public class ReviewDTO {
     private UUID id;
     private UUID userId;
-    private UUID orderId;
-    private String userName;
     private UUID restaurantId;
+    private String userEmail;
     private int rating;
     private String comment;
     private LocalDateTime createdAt;

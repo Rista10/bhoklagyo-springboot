@@ -27,7 +27,6 @@ public class FileController {
     public Map<String, String> getViewUrl(@RequestParam String key) {
 
         String signedUrl = backblazeService.generateSignedGetUrl(key);
-
         return Map.of("viewUrl", signedUrl);
     }
 

@@ -7,11 +7,10 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequ
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
-import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.S3Client;
-
+import org.springframework.cache.annotation.Cacheable;
 
 import java.time.Duration;
 import java.util.UUID;
@@ -57,9 +56,8 @@ public class BackblazeService {
         );
     }
 
-
+    @Cacheable(value = "presigned-get-urls", key = "#key")
     public String generateSignedGetUrl(String key) {
-
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucket)
                 .key(key)
@@ -67,15 +65,15 @@ public class BackblazeService {
 
         GetObjectPresignRequest presignRequest =
                 GetObjectPresignRequest.builder()
-                        .signatureDuration(Duration.ofMinutes(10)) 
+                        .signatureDuration(Duration.ofMinutes(10))
                         .getObjectRequest(getObjectRequest)
                         .build();
 
-        PresignedGetObjectRequest presignedRequest =
-                presigner.presignGetObject(presignRequest);
-
-        return presignedRequest.url().toString();
+        return presigner.presignGetObject(presignRequest)
+                .url()
+                .toString();
     }
+
 
     public void deleteFile(String key) {
 
