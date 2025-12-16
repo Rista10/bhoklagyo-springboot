@@ -59,14 +59,13 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurantService.getRestaurantById(restaurantId));
     }
 
-
     @PreAuthorize("hasRole('RESTAURANT_OWNER')")
     @PostMapping
     public ResponseEntity<RestaurantResponseDTO> createRestaurant(
             @RequestBody RestaurantRequestDTO request,
             Authentication authentication
     ) {
-        return ResponseEntity.ok(
+        return ResponseEntity.status(201).body(
                 restaurantService.createRestaurant(request, authentication)
         );
     }

@@ -45,22 +45,24 @@ public class MenuItemController {
     }
 
     @GetMapping("/menu/{id}")
-    public MenuItemDTO getMenuItem(@PathVariable UUID id) {
-        return menuItemService.getMenuItem(id);
+    public ResponseEntity<MenuItemDTO> getMenuItem(@PathVariable UUID id) {
+        MenuItemDTO menuItem = menuItemService.getMenuItem(id);
+        return ResponseEntity.ok(menuItem); // 200 OK with the menu item
     }
 
     @PreAuthorize("hasRole('RESTAURANT_OWNER')")
     @PutMapping("/menu/{id}")
-    public MenuItemDTO updateMenuItem(@PathVariable UUID id,
-                                      @RequestBody CreateMenuItemDTO dto) {
-        return menuItemService.updateMenuItem(id, dto);
+    public ResponseEntity<MenuItemDTO> updateMenuItem(@PathVariable UUID id,
+                                                    @RequestBody CreateMenuItemDTO dto) {
+        MenuItemDTO updatedItem = menuItemService.updateMenuItem(id, dto);
+        return ResponseEntity.ok(updatedItem); 
     }
-
 
     @PreAuthorize("hasRole('RESTAURANT_OWNER')")
     @DeleteMapping("/menu/{id}")
-    public void deleteMenuItem(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteMenuItem(@PathVariable UUID id) {
         menuItemService.deleteMenuItem(id);
+        return ResponseEntity.noContent().build(); 
     }
 
     @PostMapping("/menu")

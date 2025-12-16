@@ -4,6 +4,7 @@ import com.backend.bhoklagyo.dto.dashboard.MonthlyRateDTO;
 import com.backend.bhoklagyo.dto.dashboard.PopularFoodDTO;
 import com.backend.bhoklagyo.service.DashboardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;    
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,17 +20,17 @@ public class DashboardController {
     private final DashboardService dashboardService;
 
     @GetMapping("/summary")
-    public DashboardSummaryDTO summary(@PathVariable UUID restaurantId) {
-        return dashboardService.getSummary(restaurantId);
+    public ResponseEntity<DashboardSummaryDTO> summary(@PathVariable UUID restaurantId) {
+        return ResponseEntity.ok(dashboardService.getSummary(restaurantId));
     }
 
     @GetMapping("/order-rate")
-    public List<MonthlyRateDTO> orderRate(@PathVariable UUID restaurantId) {
-        return dashboardService.getMonthlyRate(restaurantId);
+    public ResponseEntity<List<MonthlyRateDTO>> orderRate(@PathVariable UUID restaurantId) {
+        return ResponseEntity.ok(dashboardService.getMonthlyRate(restaurantId));
     }
 
     @GetMapping("/popular-food")
-    public List<PopularFoodDTO> popularFood(@PathVariable UUID restaurantId) {
-        return dashboardService.getPopularFood(restaurantId);
+    public ResponseEntity<List<PopularFoodDTO>> popularFood(@PathVariable UUID restaurantId) {
+        return ResponseEntity.ok(dashboardService.getPopularFood(restaurantId));
     }
 }

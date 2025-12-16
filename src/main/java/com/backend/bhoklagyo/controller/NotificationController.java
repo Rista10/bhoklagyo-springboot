@@ -8,6 +8,7 @@ import com.backend.bhoklagyo.service.AuthService;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,15 +26,17 @@ public class NotificationController {
     }
 
     @GetMapping("/notifications")
-    public List<NotificationResponseDTO> getUserNotifications(Authentication authentication) {
-
+    public ResponseEntity<List<NotificationResponseDTO>> getUserNotifications(Authentication authentication) {
         String userId = authService.getCurrentUserId(authentication);
         UUID userUUID = UUID.fromString(userId);
 
-        return notificationRepository
+        List<NotificationResponseDTO> notifications = notificationRepository
                 .findByUserIdOrderByCreatedAtDesc(userUUID)
                 .stream()
                 .map(NotificationMapper::toDTO)
                 .toList();
+
+        return ResponseEntity.ok(notifications); 
     }
+
 }

@@ -50,10 +50,18 @@ public class ReviewService {
         Review review = ReviewMapper.toEntity(dto);
         review.setUser(user);
         review.setRestaurant(restaurant);
-        review.setOrder(latestOrder); 
+        review.setOrder(latestOrder);
         review.setCreatedAt(LocalDateTime.now());
 
         reviewRepo.save(review);
+
+        Double avgRating = reviewRepo.findByRestaurantId(restaurant.getId()).stream()
+                .mapToDouble(Review::getRating)
+                .average()
+                .orElse(0.0);
+        restaurant.setRating(avgRating);
+        restaurantRepo.save(restaurant);
+
         return ReviewMapper.toDTO(review);
     }
 

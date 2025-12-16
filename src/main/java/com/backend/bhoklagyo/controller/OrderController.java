@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
@@ -23,32 +24,42 @@ public class OrderController {
 
     @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping
-    public OrderDTO create(@RequestBody CreateOrderDTO dto, Authentication authentication) {
-    return orderService.createOrder(dto, authentication);
-}
+    public ResponseEntity<OrderDTO> create(@RequestBody CreateOrderDTO dto, Authentication authentication) {
+        OrderDTO createdOrder = orderService.createOrder(dto, authentication);
+        return ResponseEntity.status(201).body(createdOrder); 
+    }
+
     @GetMapping("/{orderId}")
-    public OrderDTO get(@PathVariable UUID orderId) {
-        return orderService.getOrder(orderId);
+    public ResponseEntity<OrderDTO> get(@PathVariable UUID orderId) {
+        OrderDTO order = orderService.getOrder(orderId);
+        return ResponseEntity.ok(order); 
     }
 
     @GetMapping("/user/{userId}/active")
-    public List<UUID> getActiveOrderIdsByUser(@PathVariable UUID userId) {
-        return orderService.getNonCompletedOrderIdsByUser(userId);
+    public ResponseEntity<List<UUID>> getActiveOrderIdsByUser(@PathVariable UUID userId) {
+        List<UUID> activeOrders = orderService.getNonCompletedOrderIdsByUser(userId);
+        if (activeOrders.isEmpty()) {
+            return ResponseEntity.noContent().build(); 
+        }
+        return ResponseEntity.ok(activeOrders);
     }
-
 
     @PreAuthorize("hasRole('RESTAURANT_OWNER')")
     @PatchMapping("/{orderId}/status")
-    public OrderDTO updateStatus(
+    public ResponseEntity<OrderDTO> updateStatus(
             @PathVariable UUID orderId,
             @RequestParam String status
     ) {
-        return orderService.updateOrderStatus(orderId, status);
+        OrderDTO updatedOrder = orderService.updateOrderStatus(orderId, status);
+        return ResponseEntity.ok(updatedOrder); 
     }
 
     @GetMapping("/customers/{customerId}/orders")
-    public ResponseEntity<List<OrderDTO>> getOrdersByCustomer(
-            @PathVariable UUID customerId) {
-        return ResponseEntity.ok(orderService.getOrdersByCustomer(customerId));
+    public ResponseEntity<List<OrderDTO>> getOrdersByCustomer(@PathVariable UUID customerId) {
+        List<OrderDTO> orders = orderService.getOrdersByCustomer(customerId);
+        if (orders.isEmpty()) {
+            return ResponseEntity.noContent().build(); 
+        }
+        return ResponseEntity.ok(orders);
     }
 }
