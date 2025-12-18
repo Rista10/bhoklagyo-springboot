@@ -33,6 +33,9 @@ public class SecurityConfig {
                         "/files/view-url",
                         "/subscribe/**"
                 ).permitAll()
+                    .requestMatchers(HttpMethod.POST,
+                        "/menu",
+                        "/restaurants/*/menu").permitAll()
                 .requestMatchers(
                         "/users/me/**",
                         "/role-requests/**"
@@ -63,8 +66,9 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(Arrays.asList(
-                "http://localhost:5173"
+        config.setAllowedOriginPatterns(Arrays.asList(
+                "http://localhost:*",
+                "https://*.devtunnels.ms"
         ));
 
         config.setAllowedMethods(Arrays.asList(

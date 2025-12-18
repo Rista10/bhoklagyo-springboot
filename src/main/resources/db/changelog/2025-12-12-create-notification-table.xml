@@ -8,7 +8,7 @@
     <!-- =============================================== -->
     <!-- 1) CREATE NOTIFICATION TABLE                    -->
     <!-- =============================================== -->
-    <changeSet id="create-notification-table" author="your_name">
+    <changeSet id="create-notification-table" author="rista">
 
         <createTable tableName="notification">
 

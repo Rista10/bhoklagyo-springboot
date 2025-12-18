@@ -44,6 +44,7 @@ public class UserController {
 
         user.setName(req.getName());
         user.setPhoneNumber(req.getPhoneNumber());
+        user.setDefaultAddress(req.getAddress());
         userRepository.save(user);
 
         return ResponseEntity.ok(user);

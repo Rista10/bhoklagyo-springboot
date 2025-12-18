@@ -11,18 +11,26 @@ import org.springframework.data.domain.Pageable;
 
 public interface MenuItemRepository extends JpaRepository<MenuItem, UUID> {
 
-    @Query("""
-        SELECT m FROM MenuItem m
-        WHERE (:name IS NULL OR LOWER(m.name) LIKE LOWER(CONCAT('%', :name, '%')))
-          AND (:veg IS NULL OR m.veg = :veg)
+    @Query(value = """
+        SELECT * FROM menu_items m
+        WHERE (:veg IS NULL OR m.is_veg = :veg)
           AND (:category IS NULL OR LOWER(m.category) = LOWER(:category))
-    """)
+          AND (:text IS NULL OR MATCH(m.name, m.description) AGAINST (:text IN NATURAL LANGUAGE MODE))
+        """,
+            countQuery = """
+        SELECT COUNT(*) FROM menu_items m
+        WHERE (:veg IS NULL OR m.is_veg = :veg)
+          AND (:category IS NULL OR LOWER(m.category) = LOWER(:category))
+          AND (:text IS NULL OR MATCH(m.name, m.description) AGAINST (:text IN NATURAL LANGUAGE MODE))
+        """,
+            nativeQuery = true)
     Page<MenuItem> filterMenuItems(
-            @Param("name") String name,
+            @Param("text") String text,
             @Param("veg") Boolean veg,
             @Param("category") String category,
             Pageable pageable
     );
+
     List<MenuItem> findAllByIdIn(List<UUID> ids);
 
      @Query("""

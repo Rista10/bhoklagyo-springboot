@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Index on name -->
+    <changeSet id="20251218-1" author="rista">
+        <createIndex indexName="idx_menu_name" tableName="menu_items">
+            <column name="name"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Index on category -->
+    <changeSet id="20251218-2" author="rista">
+        <createIndex indexName="idx_menu_category" tableName="menu_items">
+            <column name="category"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Index on is_veg -->
+    <changeSet id="20251218-3" author="rista">
+        <createIndex indexName="idx_menu_veg" tableName="menu_items">
+            <column name="is_veg"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Composite index name + is_veg -->
+    <changeSet id="20251218-4" author="rista">
+        <createIndex indexName="idx_name_veg" tableName="menu_items">
+            <column name="name"/>
+            <column name="is_veg"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

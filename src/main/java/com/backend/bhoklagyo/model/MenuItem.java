@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.util.UUID;
 
+
 @Entity
 @Table(name = "menu_items")
 @Data

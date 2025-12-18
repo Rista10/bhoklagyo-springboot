@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Full-text index on name and description -->
+    <changeSet id="20251218-fts" author="rista">
+        <preConditions onFail="MARK_RAN">
+            <!-- Only create if table exists -->
+            <tableExists tableName="menu_items"/>
+        </preConditions>
+
+        <sql>
+            CREATE FULLTEXT INDEX idx_menu_fulltext
+            ON menu_items (name, description);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
